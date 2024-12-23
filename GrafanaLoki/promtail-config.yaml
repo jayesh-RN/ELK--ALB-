@@ -1,0 +1,31 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+positions:
+  filename: /tmp/positions.yaml
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+scrape_configs:
+  - job_name: alb-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: alb-logs
+          __path__: /var/log/*log
+    pipeline_stages:
+      - regex:
+          expression: '(?P<protocol>\w+)\s+(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)?\s+(?P<lb_id>[^\s]+|-1|"-")?\s+(?P<client_ip_port>[^\s]+|-1|"-")?\s+(?P<target_ip_port>[^\s]+|-1|"-")?\s+(?P<request_processing_time1>\S+|-1|"-")?\s+(?P<response_processing_time2>\S+|-1|"-")?\s+(?P<response_processing_time3>\S+|-1|"-")?\s+(?P<status_code1>\d+|-1|"-"| -)?\s+(?P<status_code2>\d+|-1|"-"|-)'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          protocol: protocol
+          lb_id: lb_id
+          # client_ip: client_ip_port
+          # target_ip: target_ip_port
+          # time_to_Receive_Request_from_client: request_processing_time1
+          # time_to_Forward_Request_to_target: response_processing_time2
+          # time_to_Respond_from_target: response_processing_time3
+          # Load_Balancer_HTTP_Status_Code: status_code1
+          Target_HTTP_Status_Code: status_code2
