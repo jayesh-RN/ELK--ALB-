@@ -1,0 +1,26 @@
+# elasticsearch.yml
+cluster.name: "docker-cluster"
+network.host: 0.0.0.0
+discovery.type: single-node
+
+# Bootstrap memory lock to prevent swapping
+bootstrap.memory_lock: true
+
+# Security settings (basic security)
+xpack.security.enabled: false
+
+# Path settings
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+
+# Node settings
+node.name: "es01"
+
+# Network settings
+http.port: 9200
+transport.port: 9300
+
+# Heap size settings (should match ES_JAVA_OPTS in docker-compose)
+# Note: These settings are commented out as they're set via ES_JAVA_OPTS
+#bootstrap.memory_lock: true
+#thread_pool.write.queue_size: 1000

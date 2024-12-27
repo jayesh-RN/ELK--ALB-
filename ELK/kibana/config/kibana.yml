@@ -1,0 +1,25 @@
+# kibana.yml
+server.name: kibana
+server.host: "0.0.0.0"
+server.port: 5601
+
+# Elasticsearch connection
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+elasticsearch.requestTimeout: 30000
+
+# Logging settings
+logging.root.level: info
+logging.verbose: false
+
+# Monitoring settings
+monitoring.ui.container.elasticsearch.enabled: true
+
+# Security settings (basic security)
+xpack.security.enabled: false
+
+# Reporting settings
+xpack.reporting.enabled: true
+xpack.reporting.encryptionKey: "something_at_least_32_characters"
+
+# Index patterns
+kibana.defaultAppId: "home"

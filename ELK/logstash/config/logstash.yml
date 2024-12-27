@@ -1,12 +1,14 @@
+dead_letter_queue.enable: true
 http.host: 0.0.0.0
-log.level: info
+log.level: debug
 monitoring.enabled: false
 node.name: logstash-s3-alb-log-processor
 path.config: /usr/share/logstash/pipeline
+path.dead_letter_queue: /usr/share/logstash/dead_letter_queue
 path.logs: /usr/share/logstash/logs
 pipeline.batch.delay: 50
 pipeline.batch.size: 125
 pipeline.workers: 2
 queue.max_bytes: 1gb
 queue.type: persisted
-xpack.monitoring.enabled: false
+xpack.monitoring.enabled: ${XPACK_MONITORING_ENABLED}
