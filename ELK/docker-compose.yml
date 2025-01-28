@@ -15,30 +15,36 @@ services:
     networks:
       - elk_network
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.17.0
-    container_name: logstash
-    user: root
-    command: >
-      bash -c "
-        bin/logstash-plugin install logstash-filter-grok &&
-        bin/logstash-plugin install logstash-filter-geoip &&
-        bin/logstash-plugin install logstash-filter-useragent &&
-        bin/logstash -f /usr/share/logstash/pipeline/pipeline.conf"
-    volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
-      - ./logstash/config:/usr/share/logstash/config
-      - ./sincedb:/var/lib/logstash/sincedb
-      - ~/.aws:/root/.aws
-    environment:
-      - XPACK_MONITORING_ENABLED=false
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_DEFAULT_REGION=eu-central-1
-    depends_on:
-      - elasticsearch
-    networks:
-      - elk_network
+    logstash:
+      image: docker.elastic.co/logstash/logstash:8.17.0
+      container_name: logstash
+      user: root
+      command: >
+        bash -c "
+          export DEBIAN_FRONTEND=noninteractive &&
+          ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime &&
+          apt-get update &&
+          apt-get install -y tzdata awscli &&
+          dpkg-reconfigure --frontend noninteractive tzdata &&
+          bin/logstash-plugin install logstash-filter-grok &&
+        
+          bin/logstash-plugin install logstash-filter-useragent &&
+          bin/logstash-plugin install logstash-patterns-core &&
+          bin/logstash"
+      volumes:
+        - ./logstash/pipeline:/usr/share/logstash/pipeline
+        - ./logstash/config:/usr/share/logstash/config
+        - ./sincedb:/var/lib/logstash/sincedb
+        - ~/.aws:/root/.aws
+      environment:
+        - TZ=Asia/Kolkata
+        - XPACK_MONITORING_ENABLED=false
+        - AWS_PROFILE=default
+        - AWS_DEFAULT_REGION=us-east-1
+      depends_on:
+        - elasticsearch
+      networks:
+        - elk_network
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.17.0

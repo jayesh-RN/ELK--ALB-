@@ -1,2 +1,5 @@
-- pipeline.id: main
-  path.config: "/usr/share/logstash/config/pipeline.conf"
+- pipeline.id: alb
+  path.config: "/usr/share/logstash/pipeline/alb/alb.conf"
+
+- pipeline.id: elb
+  path.config: /usr/share/logstash/pipeline/elb/elb.conf
